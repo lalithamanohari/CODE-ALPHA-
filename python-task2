@@ -1,0 +1,55 @@
+class GradeTracker:
+    def _init_(self):
+        self.grades = {}
+
+    def add_grade(self, subject, grade):
+        if subject not in self.grades:
+            self.grades[subject] = []
+        self.grades[subject].append(grade)
+        print(f"Added grade {grade} for {subject}.")
+
+    def calculate_average(self, subject):
+        if subject in self.grades and self.grades[subject]:
+            avg = sum(self.grades[subject]) / len(self.grades[subject])
+            return avg
+        else:
+            return None
+
+    def display_grades(self):
+        for subject, grades in self.grades.items():
+            print(f"{subject}: {grades}")
+
+    def display_averages(self):
+        for subject in self.grades:
+            avg = self.calculate_average(subject)
+            if avg is not None:
+                print(f"Average for {subject}: {avg:.2f}")
+
+
+def main():
+    tracker = GradeTracker()
+
+    while True:
+        print("\nMenu:")
+        print("1. Add Grade")
+        print("2. View Grades")
+        print("3. View Averages")
+        print("4. Exit")
+        choice = input("Choose an option (1-4): ")
+
+        if choice == '1':
+            subject = input("Enter subject name: ")
+            grade = float(input("Enter grade: "))
+            tracker.add_grade(subject, grade)
+        elif choice == '2':
+            tracker.display_grades()
+        elif choice == '3':
+            tracker.display_averages()
+        elif choice == '4':
+            print("Exiting program.")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if _name_ == "_main_":
+    main()
