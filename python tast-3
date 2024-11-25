@@ -1,0 +1,58 @@
+import requests
+import folium
+
+def get_geolocation():
+    """
+    Fetch geolocation data using the IP address.
+    Returns a dictionary with latitude, longitude, and location details.
+    """
+    try:
+        # Use the ipapi service for geolocation
+        response = requests.get("https://ipapi.co/json/")
+        response.raise_for_status()  # Raise HTTPError for bad responses
+        data = response.json()
+        return {
+            "latitude": data.get("latitude"),
+            "longitude": data.get("longitude"),
+            "city": data.get("city"),
+            "region": data.get("region"),
+            "country": data.get("country_name"),
+        }
+    except requests.RequestException as e:
+        print(f"Error fetching geolocation: {e}")
+        return None
+
+def create_map(location_data):
+    """
+    Create an interactive map using folium centered on the provided location data.
+    """
+    if not location_data:
+        print("No location data available to create a map.")
+        return
+    
+    # Extract latitude and longitude
+    latitude = location_data["latitude"]
+    longitude = location_data["longitude"]
+    location = f"{location_data['city']}, {location_data['region']}, {location_data['country']}"
+
+    # Create a map centered on the user's location
+    user_map = folium.Map(location=[latitude, longitude], zoom_start=13)
+
+    # Add a marker for the user's location
+    folium.Marker(
+        location=[latitude, longitude],
+        popup=f"Location: {location}",
+        tooltip="Click for more info",
+    ).add_to(user_map)
+
+    # Save the map as an HTML file
+    map_file = "user_location_map.html"
+    user_map.save(map_file)
+    print(f"Map has been saved to {map_file}")
+
+if __name__ == "__main__":
+    # Fetch the user's geolocation
+    location = get_geolocation()
+
+    # Create and save the map
+    create_map(location)
